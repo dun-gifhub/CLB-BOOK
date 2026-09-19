@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mượn sách – Thư viện lớp</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body{background:var(--paper)}
+  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 60px}
+  .top{display:flex;align-items:center;gap:10px;padding:6px 2px 18px}
+  .top .brand-mark{width:36px;height:36px;flex:0 0 36px;background:var(--gold);border-radius:10px;display:grid;place-items:center;font-weight:700;color:#2a1c04}
+  .top b{font-size:16px}
+  .top span{display:block;font-size:12px;color:var(--text-soft)}
+  .top .theme{margin-left:auto;background:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+  .switch{display:flex;gap:8px;margin-bottom:16px}
+  .switch button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600}
+  .switch button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .hide{display:none}
+  .adminlink{display:block;text-align:center;margin-top:22px;color:var(--text-soft);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand-mark">TV</div>
+    <div><b>Thư viện lớp</b><span>Học sinh mượn sách</span></div>
+    <button class="theme" id="themeBtn" type="button">Sáng/Tối</button>
+  </div>
+
+  <!-- CHUA DANG NHAP -->
+  <div id="guest">
+    <div class="switch">
+      <button type="button" id="tabLogin" class="on">Đăng nhập</button>
+      <button type="button" id="tabRegister">Đăng ký tài khoản</button>
+    </div>
+
+    <div class="card" id="loginBox">
+      <h3>Đăng nhập</h3>
+      <form id="loginForm">
+        <label class="f"><span>Số điện thoại hoặc Gmail</span><input type="text" name="dinh_danh" autocomplete="username" placeholder="0912345678 hoặc tenban@gmail.com"></label>
+        <label class="f"><span>Mật khẩu</span><input type="password" name="password" autocomplete="current-password"></label>
+        <div class="err" id="loginErr" style="display:none;margin-bottom:10px"></div>
+        <button class="btn gold" type="submit" style="width:100%;justify-content:center">Đăng nhập</button>
+      </form>
+    </div>
+
+    <div class="card hide" id="registerBox">
+      <h3>Đăng ký tài khoản mới</h3>
+      <form id="registerForm" novalidate>
+        <label class="f"><span>Họ và tên <i class="req">*</i></span><input type="text" name="name" placeholder="Nguyễn Văn A"><div class="err">Hãy nhập họ và tên.</div></label>
+        <label class="f"><span>Số điện thoại <i class="req">*</i></span><input type="tel" name="phone" placeholder="0912345678"><div class="err">Số điện thoại chưa hợp lệ.</div></label>
+        <label class="f"><span>Gmail <i class="req">*</i></span><input type="email" name="email" placeholder="tenban@gmail.com"><div class="err">Gmail chưa hợp lệ.</div></label>
+        <label class="f"><span>Mật khẩu <i class="req">*</i></span><input type="password" name="password" autocomplete="new-password" placeholder="Ít nhất 6 ký tự"><div class="err">Mật khẩu cần ít nhất 6 ký tự.</div></label>
+        <label class="f"><span>Nhập lại mật khẩu <i class="req">*</i></span><input type="password" name="password2" autocomplete="new-password"><div class="err">Mật khẩu nhập lại không khớp.</div></label>
+        <div class="err" id="regErr" style="display:none;margin-bottom:10px"></div>
+        <button class="btn gold" type="submit" style="width:100%;justify-content:center">Đăng ký</button>
+      </form>
+    </div>
+
+    <a class="adminlink" href="index.html">Bạn là quản trị viên / thầy cô phụ trách? Vào đây</a>
+  </div>
+
+  <!-- DA DANG NHAP -->
+  <div id="member" class="hide">
+    <div class="row" style="justify-content:space-between;margin-bottom:14px">
+      <div><b id="hiName"></b><div class="muted" style="font-size:13px">Ngày hôm nay: <span id="today"></span></div></div>
+      <button class="btn sm" id="logout" type="button">Đăng xuất</button>
+    </div>
+
+    <div class="card">
+      <h3>📚 Mượn sách mới</h3>
+      <form id="borrowForm" novalidate>
+        <label class="f"><span>Mã sách <i class="req">*</i></span>
+          <input type="text" name="book_code" list="freeBooks" placeholder="BOOK001">
+          <datalist id="freeBooks"></datalist>
+          <div class="err" data-msg>Hãy nhập mã sách.</div></label>
+        <label class="f"><span>Tên sách <span class="muted">(nếu có)</span></span><input type="text" name="book_name"></label>
+        <div class="two">
+          <label class="f"><span>Ngày mượn <i class="req">*</i></span><input type="date" name="borrow_date"><div class="err">Hãy chọn ngày mượn.</div></label>
+          <label class="f"><span>Ngày trả <i class="req">*</i></span><input type="date" name="due_date"><div class="err" data-msg>Hãy chọn ngày trả.</div></label>
+        </div>
+        <button class="btn gold" type="submit">📚 Xác nhận mượn sách</button>
+      </form>
+    </div>
+
+    <h2 style="margin-top:24px">Sách bạn đang mượn / đã mượn</h2>
+    <div class="card" id="myList"></div>
+
+    <h2 style="margin-top:24px">📖 Sách có sẵn trong kho</h2>
+    <div class="card" id="freeList"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<dialog id="dlg"><form method="dialog" id="dlgForm">
+  <div class="dlg-h"><b id="dlgTitle">…</b><button class="x" value="cancel" type="submit" aria-label="Đóng">×</button></div>
+  <div class="dlg-b" id="dlgBody"></div>
+  <div class="dlg-f" id="dlgFoot"></div>
+</form></dialog>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,r){return (r||document).querySelector(s)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})};
+function pad(n){return n<10?"0"+n:""+n}
+function todayISO(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function viDate(iso){if(!iso)return "—";var p=String(iso).split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:iso}
+function dayDiff(a,b){return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000)}
+function toast(m,bad){var t=document.createElement("div");t.className="toast"+(bad?" bad":"");t.textContent=m;
+  $("#toast").appendChild(t);setTimeout(function(){t.remove()},3600)}
+
+var TODAY=todayISO(); var TOKEN=""; try{TOKEN=sessionStorage.getItem("tv-hs-token")||""}catch(e){}
+var NAME=""; try{NAME=sessionStorage.getItem("tv-hs-name")||""}catch(e){}
+var books=[], mine=[];
+
+async function api(path,opts){
+  opts=opts||{};
+  var res=await fetch("/api"+path,{method:opts.method||"GET",
+    headers:Object.assign({"Content-Type":"application/json"},TOKEN?{Authorization:"Bearer "+TOKEN}:{}),
+    body:opts.body?JSON.stringify(opts.body):undefined});
+  if(res.status===401 && opts.auth!==false){ signOut(); throw new Error("Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.") }
+  var data=await res.json().catch(function(){return {}});
+  if(!res.ok) throw new Error(data.error||"Máy chủ trả về lỗi "+res.status);
+  return data;
+}
+function showMember(){ $("#guest").classList.add("hide"); $("#member").classList.remove("hide"); $("#hiName").textContent="Xin chào, "+NAME; $("#today").textContent=viDate(TODAY) }
+function showGuest(){ $("#guest").classList.remove("hide"); $("#member").classList.add("hide") }
+function signOut(){ TOKEN=""; NAME=""; try{sessionStorage.removeItem("tv-hs-token");sessionStorage.removeItem("tv-hs-name")}catch(e){} showGuest() }
+$("#logout").addEventListener("click",signOut);
+
+$("#tabLogin").addEventListener("click",function(){ $("#tabLogin").classList.add("on"); $("#tabRegister").classList.remove("on");
+  $("#loginBox").classList.remove("hide"); $("#registerBox").classList.add("hide") });
+$("#tabRegister").addEventListener("click",function(){ $("#tabRegister").classList.add("on"); $("#tabLogin").classList.remove("on");
+  $("#registerBox").classList.remove("hide"); $("#loginBox").classList.add("hide") });
+
+$("#loginForm").addEventListener("submit",async function(e){
+  e.preventDefault();
+  var f=e.target;
+  try{
+    var d=await api("/dang-nhap-doc-gia",{method:"POST",auth:false,body:{dinh_danh:f.dinh_danh.value.trim(),password:f.password.value}});
+    TOKEN=d.token; NAME=d.name; try{sessionStorage.setItem("tv-hs-token",TOKEN);sessionStorage.setItem("tv-hs-name",NAME)}catch(err){}
+    $("#loginErr").style.display="none"; f.reset(); showMember(); loadAll();
+  }catch(err){ $("#loginErr").textContent=err.message; $("#loginErr").style.display="block" }
+});
+
+var isPhone=function(p){var d=String(p).replace(/[^\d]/g,"");return /^(0|\+?84)\d{8,10}$/.test(String(p).replace(/[\s.-]/g,""))&&d.length>=9&&d.length<=11};
+var isMail=function(m){return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(String(m))};
+$("#registerForm").addEventListener("submit",async function(e){
+  e.preventDefault();
+  var f=e.target,bad=false;
+  function mark(n,ok){var l=f.elements[n].closest("label.f");l.classList.toggle("bad",!ok);if(!ok)bad=true}
+  var v={name:f.name.value.trim(),phone:f.phone.value.trim(),email:f.email.value.trim(),password:f.password.value,password2:f.password2.value};
+  mark("name",v.name.length>=2); mark("phone",isPhone(v.phone)); mark("email",isMail(v.email));
+  mark("password",v.password.length>=6); mark("password2",v.password2===v.password && v.password.length>=6);
+  if(bad){ toast("Còn ô chưa hợp lệ, hãy kiểm tra lại.",true); return }
+  try{
+    var d=await api("/dang-ky",{method:"POST",auth:false,body:{name:v.name,phone:v.phone,email:v.email,password:v.password}});
+    TOKEN=d.token; NAME=d.name; try{sessionStorage.setItem("tv-hs-token",TOKEN);sessionStorage.setItem("tv-hs-name",NAME)}catch(err){}
+    $("#regErr").style.display="none"; toast("Đã tạo tài khoản. Chào mừng "+NAME+"!"); f.reset(); showMember(); loadAll();
+  }catch(err){ $("#regErr").textContent=err.message; $("#regErr").style.display="block" }
+});
+
+/* ---------- Sau khi dang nhap ---------- */
+var LABEL={borrowing:{l:"Đang mượn",c:"t-active",i:"🟢"},due_soon:{l:"Sắp đến hạn",c:"t-soon",i:"🟡"},
+  due_today:{l:"Đến hạn trả hôm nay",c:"t-today",i:"🔴"},overdue:{l:"Quá hạn",c:"t-late",i:"⚠️"},
+  returned:{l:"Đã trả",c:"t-done",i:"🔵"}};
+function st(r){
+  var k=r.trang_thai||(r.status==="returned"?"returned":"borrowing");
+  var o=LABEL[k]||LABEL.borrowing, lab=o.l;
+  if(k==="overdue") lab="Quá hạn "+Math.abs(dayDiff(TODAY,r.due_date))+" ngày";
+  if(k==="due_soon") lab="Sắp đến hạn ("+dayDiff(TODAY,r.due_date)+" ngày)";
+  return {k:k,label:lab,cls:o.c,icon:o.i};
+}
+function bookBusy(code){ return books.some(function(b){return b.book_code===code && b.status==="borrowed"}) }
+
+async function loadAll(){
+  try{
+    var r=await Promise.all([api("/sach-cong-khai",{auth:false}),api("/toi/luot-muon")]);
+    books=r[0]; mine=r[1];
+    renderMine(); renderFree(); fillFree();
+  }catch(e){ toast(e.message,true) }
+}
+function renderMine(){
+  if(!mine.length){ $("#myList").innerHTML='<div class="empty"><b>Bạn chưa mượn cuốn nào.</b>Dùng biểu mẫu bên trên để mượn cuốn đầu tiên.</div>'; return }
+  $("#myList").innerHTML='<div class="tw"><table><thead><tr><th>Mã sách</th><th>Tên sách</th><th>Ngày mượn</th><th>Ngày trả</th><th>Trạng thái</th></tr></thead><tbody>'+
+    mine.map(function(r){var s=st(r);
+      return '<tr><td class="code">'+esc(r.book_code)+'</td><td>'+esc(r.book_name||"—")+'</td>'+
+      '<td class="mono">'+viDate(r.borrow_date)+'</td><td class="mono">'+viDate(r.due_date)+'</td>'+
+      '<td><span class="tag '+s.cls+'">'+s.icon+' '+esc(s.label)+'</span></td></tr>'}).join("")+
+    '</tbody></table></div><p class="muted" style="margin-top:10px;font-size:13px">Đã trả sách rồi? Báo với thầy cô phụ trách để xác nhận trên hệ thống.</p>';
+}
+function renderFree(){
+  var free=books.filter(function(b){return b.status!=="borrowed"});
+  if(!free.length){ $("#freeList").innerHTML='<div class="empty"><b>Hiện chưa có sách nào sẵn sàng.</b></div>'; return }
+  $("#freeList").innerHTML='<div class="tw"><table><thead><tr><th>Mã sách</th><th>Tên sách</th><th>Tác giả</th><th>Thể loại</th></tr></thead><tbody>'+
+    free.map(function(b){return '<tr><td class="code">'+esc(b.book_code)+'</td><td>'+esc(b.book_name||"—")+'</td><td>'+esc(b.author||"—")+'</td><td>'+esc(b.category||"—")+'</td></tr>'}).join("")+
+    '</tbody></table></div>';
+}
+function fillFree(){
+  $("#freeBooks").innerHTML=books.filter(function(b){return b.status!=="borrowed"})
+    .map(function(b){return '<option value="'+esc(b.book_code)+'">'+esc(b.book_name||"")+'</option>'}).join("");
+}
+
+var bf=$("#borrowForm"); bf.elements.borrow_date.value=TODAY;
+bf.addEventListener("submit",async function(e){
+  e.preventDefault();
+  var f=e.target,bad=false;
+  function mark(n,ok,msg){var l=f.elements[n].closest("label.f");l.classList.toggle("bad",!ok);
+    if(!ok){bad=true;var m=l.querySelector("[data-msg]");if(m&&msg)m.textContent=msg}}
+  var v={book_code:f.book_code.value.trim().toUpperCase(),book_name:f.book_name.value.trim(),
+    borrow_date:f.borrow_date.value,due_date:f.due_date.value};
+  if(!v.book_code)mark("book_code",false,"Hãy nhập mã sách.");
+  else if(bookBusy(v.book_code))mark("book_code",false,"Mã "+v.book_code+" đang có người mượn.");
+  else mark("book_code",true);
+  mark("borrow_date",!!v.borrow_date);
+  if(!v.due_date)mark("due_date",false,"Hãy chọn ngày trả.");
+  else if(v.borrow_date&&dayDiff(v.borrow_date,v.due_date)<0)mark("due_date",false,"Ngày trả không được trước ngày mượn.");
+  else mark("due_date",true);
+  if(bad){ toast("Còn ô chưa hợp lệ, hãy kiểm tra lại.",true); return }
+  try{
+    await api("/toi/muon",{method:"POST",body:v});
+    toast("Đã ghi nhận bạn mượn "+v.book_code+", hạn trả "+viDate(v.due_date)+".");
+    f.reset(); f.elements.borrow_date.value=TODAY;
+    Array.prototype.forEach.call(f.querySelectorAll("label.f"),function(l){l.classList.remove("bad")});
+    loadAll();
+  }catch(err){ toast(err.message,true) }
+});
+
+/* ---------- Giao dien ---------- */
+function theme(){
+  var c=document.documentElement.getAttribute("data-theme");
+  var n=c==="dark"?"light":(c==="light"?"dark":(matchMedia("(prefers-color-scheme: dark)").matches?"light":"dark"));
+  document.documentElement.setAttribute("data-theme",n);
+  try{localStorage.setItem("tv-theme",n)}catch(e){}
+}
+$("#themeBtn").addEventListener("click",theme);
+try{var t=localStorage.getItem("tv-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}
+
+if(TOKEN && NAME){ showMember(); loadAll() } else { showGuest() }
+})();
+</script>
+</body>
+</html>
