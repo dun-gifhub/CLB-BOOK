@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import crypto from "node:crypto";
 import cron from "node-cron";
+import path from "node:path";
 import {
   db, listBorrows, getBorrow, createBorrow, createBorrowForAccount, markReturned,
   listNotifications, upsertBook, queueNotification,
@@ -14,7 +15,9 @@ import { hashPassword, verifyPassword, makeToken, requireAdmin, requireAccount }
 const app = express();
 app.use(express.json({ limit: "256kb" }));
 app.use(express.static("public"));  // giao dien web tai http://localhost:PORT
-
+app.get("/", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "hoc-sinh.html"));
+});
 /* ============ Kiem tra cau hinh bat buoc ============ */
 if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 16) {
   console.error("Thiếu SESSION_SECRET trong tệp .env (cần ít nhất 16 ký tự). Máy chủ dừng lại.");
